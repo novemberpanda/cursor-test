@@ -54,13 +54,16 @@ python3 coloring_book_generator.py
 
 ## 生成的主题
 
-程序会自动生成以下5种主题的填色图片：
+程序会自动生成以下8种主题的填色图片：
 
 1. **小猫花园主题** (`coloring_page_cat_garden.png`) - 可爱的小猫与花朵
 2. **动物朋友主题** (`coloring_page_animals.png`) - 小猫和小狗一起玩耍
 3. **美丽自然主题** (`coloring_page_nature.png`) - 大树、花朵、蝴蝶和白云
 4. **温馨小屋主题** (`coloring_page_house.png`) - 房子、大树和花园
-5. **综合场景主题** (`coloring_page_mixed.png`) - 包含多种元素的丰富场景
+5. **海洋冒险主题** (`coloring_page_ocean.png`) - 小船、波浪和小鱼（线条更少）
+6. **太空探索主题** (`coloring_page_space.png`) - 火箭、月亮和星星（线条更少）
+7. **交通小车主题** (`coloring_page_transport.png`) - 小汽车、道路和信号灯（线条更少）
+8. **综合场景主题** (`coloring_page_mixed.png`) - 包含多种元素的丰富场景
 
 ## 输出文件
 
@@ -70,6 +73,9 @@ python3 coloring_book_generator.py
 - `coloring_page_animals.png`
 - `coloring_page_nature.png`
 - `coloring_page_house.png`
+- `coloring_page_ocean.png`
+- `coloring_page_space.png`
+- `coloring_page_transport.png`
 - `coloring_page_mixed.png`
 
 ## 图片规格
