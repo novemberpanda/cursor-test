@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1020" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon-192.png" />
+    <title>音乐播放器</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <h1>音乐播放器</h1>
+      <div class="header-actions">
+        <button id="themeToggle" title="切换明暗主题">🌓 主题</button>
+        <button id="installBtn" hidden title="安装为应用">安装</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="left">
+        <div class="controls">
+          <button id="prevBtn" aria-label="上一首" title="上一首">⏮ 上一首</button>
+          <button id="playPauseBtn" aria-label="播放/暂停" title="播放/暂停">▶️ 播放</button>
+          <button id="nextBtn" aria-label="下一首" title="下一首">⏭ 下一首</button>
+          <div class="volume-wrap">
+            <input id="volume" type="range" min="0" max="1" step="0.01" title="音量" />
+            <button id="muteBtn" aria-label="静音" title="静音切换">🔇 静音</button>
+          </div>
+          <button id="loopBtn" aria-label="单曲循环" aria-pressed="false" title="单曲循环">🔁 循环</button>
+          <button id="shuffleBtn" aria-label="随机播放" aria-pressed="false" title="随机播放">🔀 随机</button>
+        </div>
+
+        <div class="seek-row">
+          <input id="seek" class="seek-wide" type="range" min="0" max="100" value="0" step="0.01" />
+          <span id="time">00:00 / 00:00</span>
+        </div>
+
+        <div class="importers">
+          <label class="file-import" title="从本地选择音频文件">
+            <input id="fileInput" type="file" accept="audio/*,.mp3,.flac,.wav,.ogg" multiple />
+            本地导入
+          </label>
+          <button id="folderBtn" title="导入文件夹">导入文件夹</button>
+          <div class="url-add">
+            <input id="urlInput" placeholder="输入音频 URL（如 https://.../song.mp3）" />
+            <button id="addUrlBtn" title="添加 URL">添加</button>
+          </div>
+          <div class="lyrics-import">
+            <input id="lrcInput" type="file" accept=".lrc,.txt" title="导入 LRC 歌词文件" />
+            <button id="clearLyricsBtn" title="清空歌词">清空歌词</button>
+          </div>
+        </div>
+
+        <div class="playlist-tools">
+          <input id="searchInput" type="text" placeholder="搜索歌曲..." title="按标题搜索" />
+          <select id="sortSelect" title="排序">
+            <option value="added-asc">添加顺序</option>
+            <option value="added-desc">最近添加优先</option>
+            <option value="title-asc">标题 A→Z</option>
+            <option value="title-desc">标题 Z→A</option>
+          </select>
+          <button id="openHistoryBtn" title="打开最近播放">历史</button>
+        </div>
+
+        <ul id="playlist" class="playlist" aria-label="播放列表"></ul>
+
+        <div class="recent-drawer" id="recentDrawer" aria-hidden="true">
+          <div class="recent-drawer-header">
+            <div class="recent-title">最近播放</div>
+            <div>
+              <button id="clearHistoryBtn" title="清空最近播放">清空</button>
+              <button id="closeHistoryBtn" title="关闭">关闭</button>
+            </div>
+          </div>
+          <ul id="recentList" class="recent-list" aria-label="最近播放列表"></ul>
+        </div>
+      </section>
+
+      <section class="right">
+        <div class="now-playing">
+          <div id="trackTitle" class="track-title">未选择歌曲</div>
+          <div id="trackMeta" class="track-meta"></div>
+        </div>
+        <div class="tabs">
+          <div class="tab-headers">
+            <button class="tab-btn active" data-tab="lyricsTab">歌词</button>
+            <button class="tab-btn" data-tab="eqTab">均衡器</button>
+            <button class="tab-btn" data-tab="vizTab">可视化</button>
+          </div>
+          <div class="tab-panels">
+            <div id="lyricsTab" class="tab-panel active">
+              <div id="lyrics" class="lyrics" aria-live="polite"></div>
+            </div>
+            <div id="eqTab" class="tab-panel">
+              <div class="eq" id="eqPanel">
+                <div class="eq-header">
+                  <div>均衡器</div>
+                  <button id="eqResetBtn" title="重置均衡器">重置</button>
+                </div>
+                <div class="eq-sliders">
+                  <div class="eq-band"><label>60Hz</label><input type="range" min="-12" max="12" step="1" value="0" data-band="0" /></div>
+                  <div class="eq-band"><label>170Hz</label><input type="range" min="-12" max="12" step="1" value="0" data-band="1" /></div>
+                  <div class="eq-band"><label>350Hz</label><input type="range" min="-12" max="12" step="1" value="0" data-band="2" /></div>
+                  <div class="eq-band"><label>1kHz</label><input type="range" min="-12" max="12" step="1" value="0" data-band="3" /></div>
+                  <div class="eq-band"><label>3.5kHz</label><input type="range" min="-12" max="12" step="1" value="0" data-band="4" /></div>
+                </div>
+              </div>
+            </div>
+            <div id="vizTab" class="tab-panel">
+              <canvas id="vizCanvas" class="viz" height="140"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <audio id="audio" crossorigin="anonymous"></audio>
+
+    <div class="mini-bar" id="miniBar">
+      <button id="miniPrev" title="上一首">⏮</button>
+      <button id="miniPlay" title="播放/暂停">▶️</button>
+      <button id="miniNext" title="下一首">⏭</button>
+      <div class="mini-title" id="miniTitle">未选择歌曲</div>
+      <input id="miniSeek" type="range" min="0" max="100" value="0" step="0.01" />
+      <canvas id="miniViz" class="mini-viz" height="28"></canvas>
+      <span id="miniTime">00:00 / 00:00</span>
+    </div>
+    <script src="./main.js" type="module"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js');
+        });
+      }
+    </script>
+  </body>
+  </html>
+
+
